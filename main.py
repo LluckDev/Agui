@@ -5,7 +5,9 @@ from Agui import *
 
 
 def start():
-    pass
+    window = Window()
+    while window.running:
+        window.update()
 
 
 
