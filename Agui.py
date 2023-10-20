@@ -36,8 +36,12 @@ class Window:
         self.mx = 0
         self.my = 0
         self.mousepressed = False
+        self.keypressed = False
+        self.mousePressedFunc = None
+        self.keyPressedFunc = None
         self.winx = self.window.winfo_width()
         self.winy = self.window.winfo_height()
+        self.lastKey = " "
 
         # Internal vars["image",tag,x,y,sx,sy,image,imageI]
         self.hs = {True: "normal", False: "hidden"}
@@ -52,6 +56,7 @@ class Window:
         self.window.protocol("WM_DELETE_WINDOW", self.__close__)
         self.window.bind("<Configure>", self.__OnResize__)
         self.canvas.bind("<Button-1>", self.__mousePressed__)
+        self.window.bind("<Key>", self.__keypressed__)
 
         # themes
         self.theme = []
@@ -69,6 +74,13 @@ class Window:
 
     def __mousePressed__(self, i):
         self.mousepressed = True
+        if self.mousePressedFunc != None:
+            self.mousePressedFunc()
+    def __keypressed__(self,i):
+        self.lastKey = i.char
+        self.keypressed = True
+        if self.keyPressedFunc != None:
+            self.keyPressedFunc(i.char)
 
     def update(self):
         # update vars
@@ -86,6 +98,7 @@ class Window:
 
         # close one ticks
         self.mousepressed = False
+        self.keypressed = True
 
         # actual updating window back end
         # at end
