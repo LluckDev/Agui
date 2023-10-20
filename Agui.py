@@ -33,6 +33,7 @@ class Window:
 
         # vars
         self.running = True
+        self.runningPointer = id(self.running)
         self.mx = 0
         self.my = 0
         self.mousepressed = False
