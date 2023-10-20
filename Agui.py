@@ -1,5 +1,5 @@
 from tkinter import *
-
+from PIL import Image,ImageTk
 
 # common fucncs
 def inArea(x, y, xp, yp, mx, my):
@@ -39,13 +39,14 @@ class Window:
         self.winx = self.window.winfo_width()
         self.winy = self.window.winfo_height()
 
-        # Internal vars
+        # Internal vars["image",tag,x,y,sx,sy,image,imageI]
         self.hs = {True: "normal", False: "hidden"}
         self.lineI = {"x": 2, "y": 3, "xp": 4, "yp": 5, "fill": 6, "stroke": 7, "visible": 8}
         self.TextI = {"x": 2, "y": 3, "size": 4, "text": 5, "fill": 6, "angle": 7, "visible": 8}
         self.hitbloxI = {"x": 2, "y": 3, "xp": 4, "yp": 5, "func": 6, "on": 7}
         self.mouseoverI = {"x": 2, "y": 3, "xp": 4, "yp": 5,"OnFunc":6,"OffFunc":7,"on":8}
         self.triI = {"x": 2, "y": 3, "xp": 4, "yp": 5, "xpp": 6, "ypp": 7, "fill": 8, "stroke": 9, "visible": 10}
+        self.imageI = {"x":2,"y":3,"sx":4,"sy":5,"image":6,"imageI":7}
 
         # protocols
         self.window.protocol("WM_DELETE_WINDOW", self.__close__)
@@ -159,6 +160,17 @@ class Window:
         self.data.append(["mouseover", tag, x, y, xp, yp, OnFunc, OffFunc, on, False])
         self.numb += 1
 
+    def image(self,tag,x,y,sx="d",sy="d",image="files/Agui.png",visible=True):
+        imageI = Image.open(str(image))
+        if sx != "d" and sy != "d":
+            imageI = imageI.resize((sx,sy))
+        imageI = ImageTk.PhotoImage(imageI)
+
+        self.data.append(["image",tag,x,y,sx,sy,image,imageI])
+        self.objects[tag]=self.canvas.create_image(x,y,anchor=NW,image=self.data[self.numb][7])
+        del imageI
+        self.numb +=1
+
     # updating code
     def updateType(self, tag, item, value):
 
@@ -200,7 +212,6 @@ class Window:
             except:
                 raise Exception("Incorrect Item Value \nuse: x,y,xp,yp,OnFunc,OffFunc,on")
         if type == "tri":
-            self.triI = {"x": 2, "y": 3, "xp": 4, "yp": 5, "xpp": 6, "ypp": 7, "fill": 8, "stroke": 9, "visible": 10}
             try:
                 self.data[i][self.triI[item]] = value
                 self.canvas.coords(self.objects[tag], self.data[i][2], self.data[i][3], self.data[i][4],
@@ -226,4 +237,6 @@ class Window:
             return self.data[i][self.mouseoverI[item]]
         if type == "tri":
             return self.data[i][self.triI[item]]
+        if type == "image":
+            return self.data[i][self.imageI[item]]
 
